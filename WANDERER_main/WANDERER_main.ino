@@ -12,6 +12,7 @@
 #include "TreasureHuntPlayer.h"
 #include "Admin.h"
 #include "Credits.h"
+#include "BLEPair.h"
 
 TaskHandle_t backgroundTask;
 
@@ -96,6 +97,9 @@ void loop() {
   }
   if (currentProcess == MainMenuProcess){
     My_MainMenu.MainMenuLoop();
+  }
+  else if (currentProcess == PairProcess){
+    My_Pairer.PairLoop();
   }
   else if (currentProcess == TreasureHuntProcess){
     PLAYER.gameMainLoop();

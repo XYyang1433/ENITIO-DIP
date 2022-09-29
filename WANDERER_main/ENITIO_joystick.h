@@ -6,7 +6,7 @@
 #define RELEASE_BOUNDARY 25
 
 #include <Arduino.h>
-#include <cmath>
+#include <math.h>
 
 class Joystick{
     private:

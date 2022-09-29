@@ -105,6 +105,28 @@ void CreditsDisplay() {
     display.display();
 }
 
+class BluetoothPair_OLED{
+    private:
+
+    public:
+      void nodeviceDisplay(){
+        display.clearDisplay();
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Draw 'inverse' text
+        display.setCursor(0, 0);
+        display.println(F("No Device Connected")); 
+
+        display.setCursor(10, 56);
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+        display.println("(Press to go back)"); 
+        display.display();
+      }
+  
+
+    
+};
+
+BluetoothPair_OLED BluetoothPair_OLED;
+
 class Admin_OLED{
   private:
 
@@ -342,6 +364,15 @@ class MainMenu_OLED {
           display.print(F("< "));
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
           display.print(F("Profile"));
+          display.setTextColor(SSD1306_WHITE);
+          display.print(F(" >"));
+          break;
+
+        case PairProcess:
+          display.setCursor(20, 56);
+          display.print(F("< "));
+          display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+          display.print(F("Pair Device"));
           display.setTextColor(SSD1306_WHITE);
           display.print(F(" >"));
           break;

@@ -4,11 +4,12 @@ uint8_t my_MAC_address_arr[6] = {};
 
 const int MainMenuProcess = 0 ;
 const int ProfileProcess = 1 ;
-const int TreasureHuntProcess = 2 ; 
-const int SnakeGameProcess = 3 ;
-const int MusicProcess = 4 ; 
-const int AdminProcess = 5 ;
-const int CreditProcess = 6 ;
+const int PairProcess = 2 ;
+const int TreasureHuntProcess = 3 ; 
+const int SnakeGameProcess = 4 ;
+const int MusicProcess = 5 ; 
+const int AdminProcess = 6 ;
+const int CreditProcess = 7 ;
 
 #define NAV_WAIT 4000
 
