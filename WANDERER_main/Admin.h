@@ -13,11 +13,16 @@ class Admin {
         int currentDigitIndex = 0;
         int currentDigit = 0;
         int enteringPwdNav = 1 ;
+        int user_key_in_ID[3] = {};
+        int IDcurrentDigitIndex = 0;
+        int IDcurrentDigit = 0;
+        int enteringIDNav = 1 ;
         bool verified = false ; 
         int FunctionNav = 0;
         bool isConfirmingReset = false;
         int ConfirmingResetNav = 1;
         bool isSettingGL = false;
+        bool isSettingID = false;
         int isGLNav = 1 ;
 
     public:
@@ -31,7 +36,7 @@ class Admin {
                         break;
 
                     case down:
-                        FunctionNav = min(FunctionNav + 1, 2);
+                        FunctionNav = min(FunctionNav + 1, 3);
                         Player_joystick.set_state();
                         break;
 
@@ -51,7 +56,11 @@ class Admin {
                                 isSettingGL = true;
                             }
                             break;
-
+                            
+                        case SettingIDFunction:
+                            isSettingID=true;
+                            break;
+                          
                         case ExitFunction:
                             currentProcess = MainMenuProcess;
                             verified = false ; 
@@ -143,6 +152,84 @@ class Admin {
                             currentDigitIndex = max(currentDigitIndex - 1, 0);
                             currentDigit = 0;
                             enteringPwdNav = 1;
+                            break;
+
+                        default:
+                            break;
+                        }
+                        Player_joystick.set_state();
+                        break;
+
+                    case idle:
+                        break;
+
+                    default:
+                        Player_joystick.set_state();
+                        break;
+                }
+            }
+        }
+
+        void handleJoystickSettingID(){
+            joystick_pos joystick_pos = Player_joystick.read_Joystick();
+            if (Player_joystick.get_state() == 0) {
+                switch (joystick_pos){
+                    case up:
+                        IDcurrentDigit ++;
+                        if (IDcurrentDigit > 9) IDcurrentDigit -= 10;
+                        if (IDcurrentDigit < 0) IDcurrentDigit += 10;
+                        Player_joystick.set_state();
+                        break;
+
+                    case down:
+                        IDcurrentDigit --;
+                        if (IDcurrentDigit > 9) IDcurrentDigit -= 10;
+                        if (IDcurrentDigit < 0) IDcurrentDigit += 10;
+                        Player_joystick.set_state();
+                        break;
+
+                    case left:
+                        enteringIDNav = max(enteringIDNav - 1 , 0) ;
+                        Player_joystick.set_state();
+                        break;
+
+                    case right:
+                        enteringIDNav = min(enteringIDNav + 1 , 2) ;
+                        Player_joystick.set_state();
+                        break;
+
+                    case button:
+                        switch (enteringIDNav)
+                        {
+                        case 0:
+                            currentProcess = MainMenuProcess;
+                            enteringIDNav = 1;
+                            IDcurrentDigit = 0;
+                            IDcurrentDigitIndex = 0;
+                            break;
+                        
+                        case 1:
+                            if (IDcurrentDigitIndex < 2){
+                                user_key_in_ID[IDcurrentDigitIndex] = IDcurrentDigit ; 
+                                IDcurrentDigitIndex ++ ;
+                                IDcurrentDigit = 0;
+                            }
+                            else {
+                                user_key_in_ID[IDcurrentDigitIndex] = IDcurrentDigit ; 
+                                IDcurrentDigit = 0;
+                                IDcurrentDigitIndex = 0;
+                                isIDinput=1;
+                                int tempID;
+                                tempID = user_key_in_ID[0]*100+user_key_in_ID[1]*10+user_key_in_ID[2];
+                                EEPROM.write(ID_add, tempID);
+                                isSettingID = false;
+                            }
+                            break;
+
+                        case 2:
+                            IDcurrentDigitIndex = max(IDcurrentDigitIndex - 1, 0);
+                            IDcurrentDigit = 0;
+                            enteringIDNav = 1;
                             break;
 
                         default:
@@ -256,7 +343,11 @@ class Admin {
                     handleJoystickSettingGL();
                     Admin_OLED.display_SettingGL(isGLNav);
                 }
-                else {
+                else if (isSettingID){
+                    handleJoystickSettingID();
+                    Admin_OLED.display_SettingID(IDcurrentDigitIndex, IDcurrentDigit, enteringIDNav, user_key_in_ID);
+                }
+                else{
                     handleJoystickMain();
                     Admin_OLED.display_MainAdmin(FunctionNav);
                 }

@@ -771,8 +771,8 @@ class TreasureHuntPlayer
         if (gameStarted) {
           int og = EEPROM.read(OG_add);
           bool isGL = EEPROM.read(isGL_add);
-          int id = dbc.getPlayerID(og, my_MAC_address);
-          EEPROM.write(ID_add, id);
+          int id =  EEPROM.read(ID_add);//dbc.getPlayerID(og, my_MAC_address);
+          
           Serial.println(id);
           setup_initial_state(id, og, isGL); // initialize Player
           Player_Bluetooth.initialise();

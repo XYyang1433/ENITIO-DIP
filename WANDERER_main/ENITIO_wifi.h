@@ -215,9 +215,10 @@ class DBConnection {
         }
 
         int getPlayerID(int OG, String mac_addr) {
-            String url = DATABASE_URL + "player_id/" + String(OG) + "/" + mac_addr;
+            /*String url = DATABASE_URL + "player_id/" + String(OG) + "/" + mac_addr;
             String jsonArray = GET_Request(url.c_str());
-            return retrieveParameterFromJSONArray("player_id", jsonArray).toInt();
+            return retrieveParameterFromJSONArray("player_id", jsonArray).toInt();*/
+            return 0;//EEPROM.read(ID_add);
         };
 
         GAME_CONSTANTS getGameConstants() {

@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <string.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -66,7 +67,8 @@ const unsigned char enitioLogo [] PROGMEM = {
 
 const int SetGLFunction = 0;
 const int FactoryResetFunction = 1;
-const int ExitFunction = 2;
+const int SettingIDFunction = 2;
+const int ExitFunction = 3;
 
 void StartUpDisplay(){
   display.clearDisplay();
@@ -238,7 +240,8 @@ class Admin_OLED{
       display.println("Register Role");
       display.setCursor(10, 22);
       display.println("Factory Reset");
-
+      display.setCursor(10, 32);
+      display.println("Set ID");
       display.setCursor(10, 42);
       display.println("Back to Main Menu");
 
@@ -254,8 +257,13 @@ class Admin_OLED{
         display.println(">");
         break;
 
+      case SettingIDFunction:
+        display.setCursor(2, 32);
+        display.println(">");
+        break;
+
       case ExitFunction:
-        display.setCursor(2, 42);
+        display.setCursor(3, 42);
         display.println(">");
         break;
 
@@ -270,6 +278,62 @@ class Admin_OLED{
       display.display();
     }
 
+    void display_SettingID(int IDcurrentDigitIndex, int IDcurrentDigit, int enteringIDNav, int *user_key_in_ID){
+      display.clearDisplay();
+
+      display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Draw 'inverse' text
+      display.setCursor(0, 0);
+      display.println(F("Please Enter ID")); 
+
+      int i;
+      for(i = 0; i < 3; i++){
+        display.setCursor(5+15*(i+1), 28);
+        if (IDcurrentDigitIndex < i){
+          display.setTextColor(SSD1306_WHITE);
+          display.print("*");
+        }
+        else if (IDcurrentDigitIndex == i){
+          display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+          display.print(IDcurrentDigit);
+        }
+        else {
+          display.setTextColor(SSD1306_WHITE);
+          display.print(user_key_in_ID[i]);
+        }
+      }
+
+      display.setCursor(0, 56);
+      switch (enteringIDNav)
+      {
+      case 0:
+        display.setTextColor(SSD1306_WHITE);
+        display.print(" "); 
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+        display.print("Back to Main Menu"); 
+        display.setTextColor(SSD1306_WHITE);
+        display.print(" >"); 
+        break;
+      
+      case 1:
+        display.setTextColor(SSD1306_WHITE);
+        display.print(" <      Enter      > "); 
+        break;
+
+      case 2: 
+        display.setTextColor(SSD1306_WHITE);
+        display.print(" <          "); 
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+        display.print("Backspace"); 
+        break;
+
+      default:
+        break;
+      }
+
+      display.display();
+    }
+
+    
     void display_ConfirmingReset(int ConfirmingResetNav){
       display.clearDisplay();
       display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Draw 'inverse' text
@@ -432,7 +496,7 @@ class Profile_OLED {
   private:
 
   public:
-    void display_CompleteProfilePage(int OG, int isGL){
+    void display_CompleteProfilePage(int OG, int isGL,int ID){
       display.clearDisplay();
       display.setTextSize(1); // Draw SIZE
       display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Draw 'inverse' text
@@ -453,6 +517,8 @@ class Profile_OLED {
       }
 
       display.setCursor(0, 36);
+      
+      
       switch (OG){
           case ALATAR:
             display.println("OG: Alatar ");
@@ -467,8 +533,9 @@ class Profile_OLED {
             display.println("OG: Invicta ");
             break;
         }
-
-      display.setCursor(10, 56);
+      display.setCursor(0, 45);
+      display.print(ID);
+      display.setCursor(0, 56);
       display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
       display.println("(Press to go back)"); 
       display.display();

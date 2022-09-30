@@ -115,7 +115,8 @@ class Profile{
                 handleJoystickRegistered();
                 int OG_ = EEPROM.read(OG_add);
                 int isGL_ = EEPROM.read(isGL_add);
-                Profile_OLED.display_CompleteProfilePage(OG_, isGL_);
+                int ID = EEPROM.read(ID_add);
+                Profile_OLED.display_CompleteProfilePage(OG_, isGL_,ID);
             }
         }
 };

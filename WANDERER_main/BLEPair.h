@@ -1,3 +1,8 @@
+
+bool isPaired=0;
+bool isIDinput=0;
+
+
 class Pairer{
     private:
     

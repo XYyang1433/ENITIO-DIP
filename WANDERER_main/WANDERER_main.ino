@@ -10,9 +10,10 @@
 #include "MainMenu.h"
 #include "Profile.h"
 #include "TreasureHuntPlayer.h"
+#include "BLEPair.h"
 #include "Admin.h"
 #include "Credits.h"
-#include "BLEPair.h"
+
 
 TaskHandle_t backgroundTask;
 
