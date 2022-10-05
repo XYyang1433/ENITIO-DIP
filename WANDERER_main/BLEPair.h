@@ -119,7 +119,7 @@ class PlayerUART {
             );//receive
 
             pRxCharacteristic->setCallbacks(new MyCallbacks());//if receive, get data
-
+  
             pService->start();//servce start
             pServer->getAdvertising()->start();// Start advertising
             Serial.println("Waiting a client connection to notify...");

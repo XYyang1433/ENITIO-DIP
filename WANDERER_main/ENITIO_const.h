@@ -34,6 +34,9 @@ const int PLAYER_num_bonus1MaxEn_add = 15;
 const int PLAYER_num_bonus1MANA_add = 16;
 const int PLAYER_num_fiveminx2EnRegen_add = 17;
 const int PLAYER_num_bomb_add = 18;
+const int KILL_location_add = 19;
+int KILL_add = 20; //ensure rest.h updates this value back to 20
+
 
 
 int EN_RECOVER_DURATION;

@@ -1,5 +1,4 @@
 #include <IRremote.h>
-
 #define IR_RECEIVE_PIN     32
 #define IR_SEND_PIN        33
 

@@ -506,7 +506,14 @@ class TreasureHuntPlayer
         if(HP > 0) {
           HP = max(HP - MANA_, 0);
           EEPROM.write(PLAYER_HP_add, HP);
-          Serial.printf("Attacked. Current HP: %d \n", HP);
+          Serial.printf("Attacked by OG: ", OG_,"Player: ", ID_,". Current HP: %d \n", HP);
+          int tempLocAdd=EEPROM.read(KILL_location_add);
+          if(!tempLocAdd)
+            KILL_add=20;
+          else
+            KILL_add=tempLocAdd;
+          EEPROM.write(KILL_add++,ID_);
+          EEPROM.write(KILL_location_add,KILL_add);
           tempNoti = "       Attacked      ";
           tempNoti_start = millis();
           feedback_attack(OG_, ID_);
