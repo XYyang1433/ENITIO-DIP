@@ -92,7 +92,7 @@ void setup() {
 }
 int BLEinit=0;
 void loop() {
-  Player_UART.PlayerUARTloop();//need test
+  
   // First check if ESP is connected to WiFi
   if ((WiFi.status() != WL_CONNECTED) && (millis() - last_disconnected_time > 2000)) {
     Serial.println("Lost WiFi Connection.. attempting to reconnect");
@@ -108,7 +108,7 @@ void loop() {
       Player_UART.initialise();//only need once
       BLEinit=1;
     }
-    
+    Player_UART.PlayerUARTloop();//need test
     My_Pairer.PairLoop();
   }
   else if (currentProcess == TreasureHuntProcess){
