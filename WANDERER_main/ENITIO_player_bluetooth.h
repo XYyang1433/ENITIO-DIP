@@ -25,10 +25,10 @@ class PlayerBluetooth {
     public:
         bool isThereVirus = false;
         void initialise() {
-            NimBLEDevice::init("TestClient");
+            //NimBLEDevice::init("TestClient");
             pScan = NimBLEDevice::getScan();
             pScan->setActiveScan(true);
-            pServer = NimBLEDevice::createServer();
+            //pServer = NimBLEDevice::createServer();
             pAdvertising = NimBLEDevice::getAdvertising();
             pAdvertising->setScanResponse(true);
             pVirusService = pServer->createService(virusServiceUUID);

@@ -109,7 +109,7 @@ void CreditsDisplay() {
 
 class BluetoothPair_OLED{
     private:
-
+      
     public:
       void nodeviceDisplay(){
         display.clearDisplay();
@@ -121,6 +121,17 @@ class BluetoothPair_OLED{
         display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
         display.println("(Press to go back)"); 
         display.display();
+      }
+      void deviceConnectedDisplay(){
+        display.clearDisplay();
+        display.setTextColor(SSD1306_WHITE); 
+        display.setCursor(0, 0);
+        display.println(F("Device Connected")); 
+        
+        display.setCursor(10, 56);
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+        display.println("(Press to go back)"); 
+        display.display();        
       }
   
 
@@ -504,10 +515,10 @@ class Profile_OLED {
       display.println(F("     Your Profile    ")); 
 
       display.setTextColor(SSD1306_WHITE);
-      display.setCursor(0, 12);
+      display.setCursor(0, 11);
       display.println("ENITIO 2022");
 
-      display.setCursor(0, 24);
+      display.setCursor(0, 22);
 
       if (isGL == 0){
         display.println("Freshman"); 
@@ -516,7 +527,7 @@ class Profile_OLED {
         display.println("Group Leader");
       }
 
-      display.setCursor(0, 36);
+      display.setCursor(0, 33);
       
       
       switch (OG){
@@ -533,8 +544,8 @@ class Profile_OLED {
             display.println("OG: Invicta ");
             break;
         }
-      display.setCursor(0, 45);
-      display.print(ID);
+      display.setCursor(0, 44);
+      display.print("ID: ");display.print(ID);
       display.setCursor(0, 56);
       display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
       display.println("(Press to go back)"); 

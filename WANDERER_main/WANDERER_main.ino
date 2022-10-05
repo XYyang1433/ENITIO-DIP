@@ -50,13 +50,15 @@ void setup() {
       StartUpDisplay();
       
       // initialize Joystick 
-      Player_joystick.initialize();
+      Player_joystick.initialize();      
 
       // initialize IR
       Player_IR.enable();
       
       Player_EspNOW.enable();
 
+      
+      
       dbc.connectToWiFi();
       my_MAC_address = WiFi.macAddress();
 
@@ -88,8 +90,9 @@ void setup() {
                       &backgroundTask,      /* Task handle to keep track of created task */
                       0);
 }
-
+int BLEinit=0;
 void loop() {
+  Player_UART.PlayerUARTloop();//need test
   // First check if ESP is connected to WiFi
   if ((WiFi.status() != WL_CONNECTED) && (millis() - last_disconnected_time > 2000)) {
     Serial.println("Lost WiFi Connection.. attempting to reconnect");
@@ -100,6 +103,12 @@ void loop() {
     My_MainMenu.MainMenuLoop();
   }
   else if (currentProcess == PairProcess){
+    
+    if(!BLEinit){
+      Player_UART.initialise();//only need once
+      BLEinit=1;
+    }
+    
     My_Pairer.PairLoop();
   }
   else if (currentProcess == TreasureHuntProcess){

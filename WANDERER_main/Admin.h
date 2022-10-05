@@ -223,6 +223,7 @@ class Admin {
                                 tempID = user_key_in_ID[0]*100+user_key_in_ID[1]*10+user_key_in_ID[2];
                                 EEPROM.write(ID_add, tempID);
                                 isSettingID = false;
+                                
                             }
                             break;
 
