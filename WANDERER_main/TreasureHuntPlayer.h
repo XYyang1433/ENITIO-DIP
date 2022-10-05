@@ -143,6 +143,7 @@ class TreasureHuntPlayer
         EEPROM.write(PLAYER_MaxHP_add, MaxHP);
         EEPROM.write(PLAYER_MaxEn_add, MaxEn);
         EEPROM.write(PLAYER_MANA_add, MANA);
+        EEPROM.write(KILL_location_add, 0);
         EEPROM.commit();
       }
       else {
@@ -506,14 +507,20 @@ class TreasureHuntPlayer
         if(HP > 0) {
           HP = max(HP - MANA_, 0);
           EEPROM.write(PLAYER_HP_add, HP);
-          Serial.printf("Attacked by OG: ", OG_,"Player: ", ID_,". Current HP: %d \n", HP);
-          int tempLocAdd=EEPROM.read(KILL_location_add);
-          if(!tempLocAdd)
-            KILL_add=20;
-          else
-            KILL_add=tempLocAdd;
-          EEPROM.write(KILL_add++,ID_);
-          EEPROM.write(KILL_location_add,KILL_add);
+          Serial.printf("Attacked by OG: %d Player: %d .Current HP: %d \n", OG_, ID_, HP);
+          if(HP==0)
+          {
+            int tempLocAdd=EEPROM.read(KILL_location_add);
+            if(tempLocAdd==0)
+              KILL_add=20;
+            else
+              KILL_add=tempLocAdd;
+            Serial.printf("Killed BY OG: %d Player: %d Recorded at byte %d\n", OG_, ID_,KILL_add);
+            EEPROM.write(KILL_add++,ID_);
+            EEPROM.write(KILL_location_add,KILL_add);
+            HP++;
+          }
+         
           tempNoti = "       Attacked      ";
           tempNoti_start = millis();
           feedback_attack(OG_, ID_);
