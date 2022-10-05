@@ -15,9 +15,9 @@ bool messageEnd = false;
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
 
-#define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E" // UART service UUID
-#define CHARACTERISTIC_UUID_RX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_TX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
+std::string SERVICE_UUID; // UART service UUID 
+std::string CHARACTERISTIC_UUID_RX;
+std::string CHARACTERISTIC_UUID_TX ;
 
 
 class PlayerUART {
@@ -103,6 +103,11 @@ class PlayerUART {
             int ID = EEPROM.read(ID_add);
             std::string displayString= "Device with ID:" + std::to_string(ID);
             Serial.println(ID);
+            
+            SERVICE_UUID = "6E40"+std::to_string(ID)+"1-B5A3-F393-E0A9-E50E24DCCA9E"; 
+            CHARACTERISTIC_UUID_RX ="6E40"+std::to_string(ID)+"2-B5A3-F393-E0A9-E50E24DCCA9E";
+            CHARACTERISTIC_UUID_TX ="6E40"+std::to_string(ID)+"3-B5A3-F393-E0A9-E50E24DCCA9E";
+                
             BLEDevice::init(displayString);
             pServer = BLEDevice::createServer();
             pServer->setCallbacks(new MyServerCallbacks());
