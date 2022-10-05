@@ -13,7 +13,7 @@ const int CreditProcess = 7 ;
 
 #define NAV_WAIT 4000
 
-#define EEPROM_SIZE 20
+#define EEPROM_SIZE 30
 
 const int PROFILE_enable_add = 0;
 const int OG_add = 1;
