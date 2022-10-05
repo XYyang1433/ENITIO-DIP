@@ -66,7 +66,7 @@ class PlayerUART {
                         */
                     }
                     std::size_t endPos = rxValue.find("@");//find end position
-                    if (endPos != std::string::npos) {
+                    if (endPos != std::string::npos && messageStart=true) {
                         messageEnd = true;
                         rxValue = rxValue.substr(0, endPos);
                         /*
