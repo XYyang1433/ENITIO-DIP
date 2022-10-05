@@ -101,12 +101,13 @@ class PlayerUART {
         
         void initialise() {
             int ID = EEPROM.read(ID_add);
+            int OG = EEPROM.read(OG_add);
             std::string displayString= "Device with ID:" + std::to_string(ID);
             Serial.println(ID);
-            
-            SERVICE_UUID = "6E40"+std::to_string(ID)+"1-B5A3-F393-E0A9-E50E24DCCA9E"; 
-            CHARACTERISTIC_UUID_RX ="6E40"+std::to_string(ID)+"2-B5A3-F393-E0A9-E50E24DCCA9E";
-            CHARACTERISTIC_UUID_TX ="6E40"+std::to_string(ID)+"3-B5A3-F393-E0A9-E50E24DCCA9E";
+            std::string UUIDHeader = "6E4"+std::to_string(OG)+std::to_string(ID);
+            SERVICE_UUID = UUIDHeader +"1-B5A3-F393-E0A9-E50E24DCCA9E"; 
+            CHARACTERISTIC_UUID_RX = UUIDHeader +"2-B5A3-F393-E0A9-E50E24DCCA9E";
+            CHARACTERISTIC_UUID_TX = UUIDHeader +"3-B5A3-F393-E0A9-E50E24DCCA9E";
                 
             BLEDevice::init(displayString);
             pServer = BLEDevice::createServer();
