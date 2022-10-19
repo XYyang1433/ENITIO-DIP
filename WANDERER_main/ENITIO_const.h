@@ -2,14 +2,14 @@ int currentProcess = 0;
 String my_MAC_address;
 uint8_t my_MAC_address_arr[6] = {};
 
-const int MainMenuProcess = 0 ;
-const int ProfileProcess = 1 ;
-const int PairProcess = 2 ;
-const int TreasureHuntProcess = 3 ; 
-const int SnakeGameProcess = 4 ;
-const int MusicProcess = 5 ; 
-const int AdminProcess = 6 ;
-const int CreditProcess = 7 ;
+const int MainMenuProcess = 0;
+const int ProfileProcess = 1;
+const int PairProcess = 2;
+const int TreasureHuntProcess = 3;
+const int SnakeGameProcess = 4;
+const int MusicProcess = 5;
+const int AdminProcess = 6;
+const int CreditProcess = 7;
 
 #define NAV_WAIT 4000
 
@@ -35,7 +35,7 @@ const int PLAYER_num_bonus1MANA_add = 16;
 const int PLAYER_num_fiveminx2EnRegen_add = 17;
 const int PLAYER_num_bomb_add = 18;
 const int KILL_location_add = 19;
-int KILL_add = 20; //ensure rest.h updates this value back to 20
+int KILL_add = 20;  //ensure rest.h updates this value back to 20
 
 
 

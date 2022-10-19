@@ -515,10 +515,11 @@ class TreasureHuntPlayer
               KILL_add=20;
             else
               KILL_add=tempLocAdd;
-            Serial.printf("Killed BY OG: %d Player: %d Recorded at byte %d\n", OG_, ID_,KILL_add);
+            Serial.printf("Killed BY OG: %d Player: %d Recorded at byte %d and %d\n", OG_, ID_,KILL_add+1,KILL_add);
             EEPROM.write(KILL_add++,ID_);
+            EEPROM.write(KILL_add++,OG_);
             EEPROM.write(KILL_location_add,KILL_add);
-            HP++;
+            HP++; //IMMORTAL
           }
          
           tempNoti = "       Attacked      ";
