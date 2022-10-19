@@ -116,18 +116,12 @@ class PlayerUART {
             CHARACTERISTIC_UUID_RX = UUIDHeader +"2-B5A3-F393-E0A9-E50E24DCCA9E";
             CHARACTERISTIC_UUID_TX = UUIDHeader +"3-B5A3-F393-E0A9-E50E24DCCA9E";
                 
-<<<<<<< Updated upstream
-            BLEDevice::init(displayString);
-            pServer = BLEDevice::createServer();
-            pServer->setCallbacks(new MyServerCallbacks());
-=======
             NimBLEDevice::init(displayString);
             pServer = NimBLEDevice::createServer();
             pScan = NimBLEDevice::getScan();
             pScan->setActiveScan(true);
             pAdvertising = NimBLEDevice::getAdvertising();
             pAdvertising->setScanResponse(true);
->>>>>>> Stashed changes
             BLEService* pService = pServer->createService(SERVICE_UUID);
 
             pTxCharacteristic = pService->createCharacteristic(
