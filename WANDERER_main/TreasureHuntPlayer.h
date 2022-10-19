@@ -815,7 +815,10 @@ class TreasureHuntPlayer
 
   void gameBackgroundProcess(){
       if (!infectedWithVirus && deviceReady == 1){
+<<<<<<< Updated upstream
         Player_Bluetooth.scan();
+=======
+>>>>>>> Stashed changes
         unsigned long currTime = millis();
         if (currTime - last_update_kills_to_server > KILL_UPDATE_SERVER_INTERVAL) {
             FailedFeedbackStatistics this_stats ;

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <NimBLEDevice.h>
+#include <NimBLEAdvertisedDevice.h>
 
 bool isPaired=0;
 bool isIDinput=0;
@@ -10,7 +11,7 @@ uint8_t txValue = 0;
 std::string fullMessage = "";
 bool messageStart = false;
 bool messageEnd = false;
-
+int scanTime = 2;
 
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
@@ -18,6 +19,12 @@ bool messageEnd = false;
 std::string SERVICE_UUID; // UART service UUID 
 std::string CHARACTERISTIC_UUID_RX;
 std::string CHARACTERISTIC_UUID_TX ;
+
+/**  Constants **/
+// This Service UUID is broadcasted when the level 2 treasure is available
+#define availableServiceUUID NimBLEUUID("b8fc9a62-5c8b-4bd4-9f00-c05b558dc9ee")
+#define availableCharacteristicUUID NimBLEUUID("121153c0-1a5a-43cb-9fe2-240b22dc5958")
+
 
 
 class PlayerUART {
@@ -109,9 +116,18 @@ class PlayerUART {
             CHARACTERISTIC_UUID_RX = UUIDHeader +"2-B5A3-F393-E0A9-E50E24DCCA9E";
             CHARACTERISTIC_UUID_TX = UUIDHeader +"3-B5A3-F393-E0A9-E50E24DCCA9E";
                 
+<<<<<<< Updated upstream
             BLEDevice::init(displayString);
             pServer = BLEDevice::createServer();
             pServer->setCallbacks(new MyServerCallbacks());
+=======
+            NimBLEDevice::init(displayString);
+            pServer = NimBLEDevice::createServer();
+            pScan = NimBLEDevice::getScan();
+            pScan->setActiveScan(true);
+            pAdvertising = NimBLEDevice::getAdvertising();
+            pAdvertising->setScanResponse(true);
+>>>>>>> Stashed changes
             BLEService* pService = pServer->createService(SERVICE_UUID);
 
             pTxCharacteristic = pService->createCharacteristic(
@@ -134,6 +150,22 @@ class PlayerUART {
         void SentValueToPhone(std::string dataToSent) {
             pTxCharacteristic->setValue(dataToSent);
         }
+        
+        void scan() {
+            // Returns all devices found after scanTime seconds
+            NimBLEScanResults results = pScan->start(2, false);
+            int virus_device_counter = 0;
+            for (int i=0; i < results.getCount(); i++) {
+                NimBLEAdvertisedDevice device = results.getDevice(i);
+                if (device.haveServiceUUID()) {
+                  if (device.isAdvertisingService(availableServiceUUID)) {
+                    // available treasure nearby
+                    Serial.println("Level 2 Treasure Available");
+                    Serial.println(device.toString().c_str());
+                  }
+                }
+            }
+          };
         
 
         void PlayerUARTloop() {
