@@ -5,6 +5,7 @@
 #define FEEDBACK_WAIT 5000
 
 #define LUCKY_NOT_INFECTED_DURATION 20000 // [ms]
+#define UNLUCKY_INFECTED_BY_BRUISE 10//[%]
 
 #define x2_En_Regen_bonus_duration 300000 // [ms]
 
@@ -75,31 +76,31 @@ class TreasureHuntPlayer
     void reset(){//DIPedIT manual variables
       HP = 12;
       MaxHP = 12;
-    En = 5; // energy
-    MaxEn = 5;
-    MANA = 3;
+      En = 5; // energy
+      MaxEn = 5;
+      MANA = 3;
 
-    tempNoti = "";
-    permNoti = "";
+      tempNoti = "";
+      permNoti = "";
   
-    Nav_start = 0;
-    tempNoti_start = 0;
-    last_max_en_decay = 0;
-    last_en_recover = 0;
-    last_hp_decay = 0;
+      Nav_start = 0;
+      tempNoti_start = 0;
+      last_max_en_decay = 0;
+      last_en_recover = 0;
+      last_hp_decay = 0;
   
-    start_receiving_feedback = 0;
+      start_receiving_feedback = 0;
   
-    numKilled = 0;
-    numL1Treasure = 0;
-    numL2Treasure = 0;
+      numKilled = 0;
+      numL1Treasure = 0;
+      numL2Treasure = 0;
   
-    // LastL1TreasureCollected = -1;
+      // LastL1TreasureCollected = -1;
   
-    infectedWithVirus = 0;
+      infectedWithVirus = 0;
   
-    gameStarted = 0 ;
-    game_started_buffer = 0;
+      gameStarted = 0 ;
+      game_started_buffer = 0;
     }
 
     
@@ -166,7 +167,7 @@ class TreasureHuntPlayer
     void sendAction() {
       // format of the IR signal (16-bit hexadecimal, i.e. 4 digits)
       // address: 0x0<OG><ID - 2 bit>  (ID is 2 bits as there maybe more than 16 people in one OG)
-      // command: 0x00<MANA><Action>
+      // command: 0x00<MANA><Action> ==> 0x0<Virus><MANA><Action>
       if ((action != do_nothing) && (En > 0)) {
         uint16_hex_digits address_digits, command_digits;
 
@@ -174,6 +175,7 @@ class TreasureHuntPlayer
         address_digits.digit2 = OG;
 
         command_digits.digit0 = action;
+        command_digits.digit2 = infectedWithVirus;
 
         int this_action_multiplier;
 
@@ -216,7 +218,8 @@ class TreasureHuntPlayer
         address_digits.digit2 = OG;
 
         command_digits.digit0 = heal_request;
-        
+        command_digits.digit2 = 0;
+
         ir_signal send_signal;
         send_signal.address = address_digits;
         send_signal.command = command_digits;
@@ -228,7 +231,7 @@ class TreasureHuntPlayer
     };
 
     void receiveAction() {
-      int OG_, ID_, En_, MANA_, action_; // underscore denotes details of IR signal sender
+      int OG_, ID_, En_, MANA_, action_,Virus_; // underscore denotes details of IR signal sender
       unsigned long currTime = millis();
       if (Player_IR.available()) {
          ir_signal IRsignal_ = Player_IR.read();
@@ -246,7 +249,7 @@ class TreasureHuntPlayer
            lastActionReceived = currTime;
 
            if (((OG_ != OG) && (action_ == attack)) || ((action_ == heal) && (OG_ == OG) && (ID_ != ID)) || ((action_ == heal) && (OG_ != OG))) 
-                handleAction(OG_, ID_, action_, MANA_);
+                handleAction(OG_, ID_, action_, MANA_,Virus_);
            }
         }
       }
@@ -263,7 +266,7 @@ class TreasureHuntPlayer
         //   last_max_en_decay = currTime;
         // }
         if (infectedWithVirus) {
-            Player_Bluetooth.stopSpreadingVirus();
+            //Player_Bluetooth.stopSpreadingVirus();
             infectedWithVirus = 0;
         }
         if (MANA > 1) {
@@ -303,29 +306,7 @@ class TreasureHuntPlayer
                 last_hp_decay = currTime;
             };
             permNoti = "    You Are Infected!   ";
-        } else if (!_isGL){
-            // currently not infected with virus AND is not healer
-            // check if nearby devices are transmitting virus
-            if (Player_Bluetooth.isThereVirus && (currTime - last_received_heal >= VIRUS_IMMUNITY_DURATION) && (currTime - last_lucky_not_infected >= LUCKY_NOT_INFECTED_DURATION)) {
-                // randomSeed(currTime);
-                int virus_infection_num = random(100);
-                Serial.print("Virus infection prob number: ");
-                Serial.println(virus_infection_num);
-                if (virus_infection_num < VIRUS_INFECTION_PROBABILITY){
-                  infectedWithVirus = true;
-                  HP--;
-                  EEPROM.write(PLAYER_HP_add, HP);
-                  last_hp_decay = currTime;
-                  Player_Bluetooth.startSpreadingVirus();
-                  permNoti = "    You Are Infected!   ";
-                  Player_Buzzer.sound(NOTE_C4);
-                  tempNoti_start = millis();
-                }
-                else {
-                  last_lucky_not_infected = currTime;
-                }
-            }
-        }
+        } 
       }
       EEPROM.commit();
     }
@@ -499,7 +480,8 @@ class TreasureHuntPlayer
       PowerUpNav = 0;
     }
 
-    void handleAction(int OG_, int ID_, int action_, int MANA_){
+    void handleAction(int OG_, int ID_, int action_, int MANA_, int Virus_){
+      unsigned long currTime = millis();
       Serial.println(action_);
       switch (action_)
       {
@@ -508,6 +490,48 @@ class TreasureHuntPlayer
           HP = max(HP - MANA_, 0);
           EEPROM.write(PLAYER_HP_add, HP);
           Serial.printf("Attacked by OG: %d Player: %d .Current HP: %d \n", OG_, ID_, HP);
+          if (!_isGL && (currTime - last_received_heal >= VIRUS_IMMUNITY_DURATION) && (currTime - last_lucky_not_infected >= LUCKY_NOT_INFECTED_DURATION)){
+            // currently not infected with virus AND is not healer
+            // check if nearby devices are transmitting virus
+            if (Virus_) {
+              // randomSeed(currTime);
+              int virus_infection_num = random(100);
+              Serial.print("Virus infection prob number: ");
+              Serial.println(virus_infection_num);
+              if (virus_infection_num < VIRUS_INFECTION_PROBABILITY){
+                infectedWithVirus = true;
+                HP--;
+                EEPROM.write(PLAYER_HP_add, HP);
+                last_hp_decay = currTime;
+                //Player_Bluetooth.startSpreadingVirus();
+                permNoti = "    You Are Infected!   ";
+                Player_Buzzer.sound(NOTE_C4);
+                tempNoti_start = millis();
+              }
+              else {
+                last_lucky_not_infected = currTime;
+              }
+            }
+            else if(!Virus_){
+              // randomSeed(currTime);
+              int virus_infection_by_bruise_num = random(100);
+              Serial.print("Virus infection prob number: ");
+              Serial.println(virus_infection_by_bruise_num);
+              if (virus_infection_by_bruise_num < UNLUCKY_INFECTED_BY_BRUISE){
+                infectedWithVirus = true;
+                HP--;
+                EEPROM.write(PLAYER_HP_add, HP);
+                last_hp_decay = currTime;
+                //Player_Bluetooth.startSpreadingVirus();
+                permNoti = "    You Are Infected!   ";
+                Player_Buzzer.sound(NOTE_C4);
+                tempNoti_start = millis();
+              }
+              else {
+                last_lucky_not_infected = currTime;
+              }
+            }
+        }
           if(HP==0)
           {
             int tempLocAdd=EEPROM.read(KILL_location_add);
@@ -535,7 +559,7 @@ class TreasureHuntPlayer
         tempNoti = "        Healed       ";
         tempNoti_start = millis();
         if (infectedWithVirus) {
-            Player_Bluetooth.stopSpreadingVirus();
+            //Player_Bluetooth.stopSpreadingVirus();
         }
         infectedWithVirus = 0;
         last_received_heal = tempNoti_start;
@@ -658,7 +682,7 @@ class TreasureHuntPlayer
         tempNoti = "        Healed       ";
         tempNoti_start = millis();
         if (infectedWithVirus) {
-            Player_Bluetooth.stopSpreadingVirus();
+            //Player_Bluetooth.stopSpreadingVirus();
         }
         infectedWithVirus = 0;
         last_received_heal = tempNoti_start;
@@ -790,7 +814,7 @@ class TreasureHuntPlayer
           
           Serial.println(id);
           setup_initial_state(id, og, isGL); // initialize Player
-          Player_Bluetooth.initialise();
+          //Player_Bluetooth.initialise();
           deviceReady = 1;
         }
         return gameStarted;

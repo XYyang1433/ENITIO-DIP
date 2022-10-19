@@ -4,7 +4,14 @@
 
 bool isPaired=0;
 bool isIDinput=0;
-BLECharacteristic* pTxCharacteristic;
+
+NimBLEScan *pScan;
+NimBLEServer* pServer;
+NimBLEService* pService;
+NimBLEAdvertising* pAdvertising;
+NimBLECharacteristic* pTxCharacteristic;
+NimBLECharacteristic* pRxCharacteristic;
+
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint8_t txValue = 0;
@@ -29,6 +36,7 @@ std::string CHARACTERISTIC_UUID_TX ;
 
 class PlayerUART {
 	public:
+  /*
         class MyServerCallbacks : public BLEServerCallbacks {
             void onConnect(BLEServer* pServer) {
                 deviceConnected = true;
@@ -50,7 +58,7 @@ class PlayerUART {
             void onAuthenticationComplete(ble_gap_conn_desc desc) {
                 Serial.println("Starting BLE work!");
             }
-        };
+        };*/
         class MyCallbacks : public BLECharacteristicCallbacks {
             void onWrite(BLECharacteristic* pCharacteristic) {
                 std::string rxValue = pCharacteristic->getValue();
@@ -122,14 +130,14 @@ class PlayerUART {
             pScan->setActiveScan(true);
             pAdvertising = NimBLEDevice::getAdvertising();
             pAdvertising->setScanResponse(true);
-            BLEService* pService = pServer->createService(SERVICE_UUID);
+            pService = pServer->createService(SERVICE_UUID);
 
             pTxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_TX,
                 NIMBLE_PROPERTY::READ
             );//transmit
 
-            BLECharacteristic* pRxCharacteristic = pService->createCharacteristic(
+            pRxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_RX,             
                 NIMBLE_PROPERTY::WRITE
             );//receive
