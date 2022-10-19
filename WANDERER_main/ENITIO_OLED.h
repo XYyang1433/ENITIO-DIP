@@ -184,6 +184,21 @@ class Admin_OLED{
       else display.println("       Freshman      ");
       display.display();
     }
+    
+    void IDTooHigh(){
+      display.clearDisplay();
+      display.setTextSize(1); // Draw SIZE
+
+      display.setTextColor(SSD1306_WHITE); 
+      display.setCursor(0, 22);
+                      
+      display.println("   Enter ID Between   ");
+
+      display.setCursor(0, 34);
+      display.println("    1 to 255    ");
+
+      display.display();
+    }
 
     void display_EnteringPwd(int currentDigitIndex, int currentDigit, int enteringPwdNav, int *user_key_in_pwd){
       display.clearDisplay();
