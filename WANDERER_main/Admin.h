@@ -221,9 +221,14 @@ class Admin {
                                 isIDinput=1;
                                 int tempID;
                                 tempID = user_key_in_ID[0]*100+user_key_in_ID[1]*10+user_key_in_ID[2];
-                                EEPROM.write(ID_add, tempID);
-                                isSettingID = false;
-                                
+                                if (tempID > 256 || tempID == 0){  //ID between 0 to 255
+                                   Admin_OLED.IDTooHigh();
+                                   delay(1500);
+                                 }
+                                 else{
+                                  EEPROM.write(ID_add, tempID);
+                                  isSettingID = false;
+                                 }                           
                             }
                             break;
 
