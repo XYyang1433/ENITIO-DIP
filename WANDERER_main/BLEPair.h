@@ -36,6 +36,8 @@ std::string CHARACTERISTIC_UUID_TX ;
 
 class PlayerUART {
 	public:
+  int ID = EEPROM.read(ID_add);
+  int OG = EEPROM.read(OG_add);
   /*
         class MyServerCallbacks : public BLEServerCallbacks {
             void onConnect(BLEServer* pServer) {
@@ -115,8 +117,7 @@ class PlayerUART {
         };
         
         void initialise() {
-            int ID = EEPROM.read(ID_add);
-            int OG = EEPROM.read(OG_add);
+            
             std::string displayString= "Device with ID:" + std::to_string(ID);
             Serial.println(ID);
             std::string UUIDHeader = "6E4"+std::to_string(OG)+std::to_string(ID);
@@ -149,8 +150,28 @@ class PlayerUART {
             Serial.println("Waiting a client connection to notify...");
         }
 
-        void SentValueToPhone(std::string dataToSent) {
-            pTxCharacteristic->setValue(dataToSent);
+        void SentValueToPhone() {
+            //every minute need to renew a string to sent
+            //read EEPROM every time
+            //OG:ID, numL1Treasure, numL2Treasure, Kill1OG:Kill1ID, Kill2OG:Kill2ID..
+            int tempKillID,tempKillOG,tempLocAdd,number_of_level1_treasure,number_of_level2_treasure;
+            std::string DataToSent;
+            
+            number_of_level1_treasure=EEPROM.read(PLAYER_numL1Treasure_add);
+            number_of_level2_treasure=EEPROM.read(PLAYER_numL2Treasure_add);
+            
+            DataToSent = std::to_string(OG) +":"+ std::to_string(ID) +","+ std::to_string(number_of_level1_treasure) +","+ std::to_string(number_of_level2_treasure);
+                        
+            tempLocAdd=EEPROM.read(KILL_location_add);
+            if(tempLocAdd!=0)
+              for(int i=20;i<20+killedCount*2;i=i+2){
+                tempKillID=EEPROM.read(i);
+                tempKillOG=EEPROM.read(i+1);
+                DataToSent += ","+ std::to_string(tempKillOG)+":" + std::to_string(tempKillID);
+              }    
+        
+            pTxCharacteristic->setValue(DataToSent);
+            
         }
         
         void scan() {
@@ -169,9 +190,9 @@ class PlayerUART {
             }
           };
         
-
-        void PlayerUARTloop() {
-
+int LastUpdateTime=millis();
+        void PlayerUARTloop() {  
+            const int time_to_upload = 60000;//[ms]
             // disconnecting
             if (!deviceConnected && oldDeviceConnected) {
                 isPaired=0;
@@ -186,6 +207,13 @@ class PlayerUART {
                 Serial.println("Device connected");
                 oldDeviceConnected = deviceConnected;
             }
+           if(isPaired){
+            if(millis()-LastUpdateTime>=time_to_upload){
+              SentValueToPhone();
+              LastUpdateTime=millis();  
+            }     
+          }
+                   
         }
 
 };

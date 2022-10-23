@@ -14,6 +14,8 @@ int game_started_buffer = 0;
 uint8_t newMACAddress_AP[] = {4, 8, 1, 255, 255, 0};
 uint8_t newMACAddress_STA[] = {4, 8, 1, 255, 255, 1};
 
+int killedCount=0;
+
 class TreasureHuntPlayer
 {
   private:
@@ -535,6 +537,7 @@ class TreasureHuntPlayer
           if(HP==0)
           {
             int tempLocAdd=EEPROM.read(KILL_location_add);
+            killedCount++;
             if(tempLocAdd==0)
               KILL_add=20;
             else
