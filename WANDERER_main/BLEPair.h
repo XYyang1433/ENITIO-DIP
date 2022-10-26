@@ -36,8 +36,7 @@ std::string CHARACTERISTIC_UUID_TX ;
 
 class PlayerUART {
 	public:
-  int ID = EEPROM.read(ID_add);
-  int OG = EEPROM.read(OG_add);
+  int ID,OG;
   /*
         class MyServerCallbacks : public BLEServerCallbacks {
             void onConnect(BLEServer* pServer) {
@@ -117,7 +116,8 @@ class PlayerUART {
         };
         
         void initialise() {
-            
+            ID = EEPROM.read(ID_add);
+            OG = EEPROM.read(OG_add);
             std::string displayString= "Device with ID:" + std::to_string(ID);
             Serial.println(ID);
             std::string UUIDHeader = "6E4"+std::to_string(OG)+std::to_string(ID);
@@ -135,12 +135,12 @@ class PlayerUART {
 
             pTxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_TX,
-                NIMBLE_PROPERTY::READ
+                NIMBLE_PROPERTY::WRITE
             );//transmit
 
             pRxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_RX,             
-                NIMBLE_PROPERTY::WRITE
+                NIMBLE_PROPERTY::READ
             );//receive
 
             pRxCharacteristic->setCallbacks(new MyCallbacks());//if receive, get data
@@ -190,7 +190,7 @@ class PlayerUART {
             }
           };
         
-int LastUpdateTime=millis();
+      int LastUpdateTime=millis();
         void PlayerUARTloop() {  
             const int time_to_upload = 60000;//[ms]
             // disconnecting
@@ -210,7 +210,8 @@ int LastUpdateTime=millis();
            if(isPaired){
             if(millis()-LastUpdateTime>=time_to_upload){
               SentValueToPhone();
-              LastUpdateTime=millis();  
+              LastUpdateTime=millis();
+              Serial.println("Data sent");  
             }     
           }
                    
