@@ -108,11 +108,12 @@ void loop() {
       Player_UART.initialise();//only need once
       BLEinit=1;
     }
-    Player_UART.PlayerUARTloop();//need test
+    Player_UART.PlayerUARTloop();
     My_Pairer.PairLoop();
   }
   else if (currentProcess == TreasureHuntProcess){
     PLAYER.gameMainLoop();
+    Player_UART.PlayerKilledDataUpdateLoop();
   }
   else if (currentProcess == ProfileProcess){
     My_Profile.ProfileLoop();

@@ -182,6 +182,7 @@ class DBConnection {
         }
         bool connectToWiFi() {
             // returns True if connected, False if timeout
+            /*
             Serial.print("Connecting to Wi-Fi");
             startWiFiConnection();
             int counter = 0;
@@ -196,6 +197,8 @@ class DBConnection {
             };
             Serial.print("Connected with IP: "); Serial.println(WiFi.localIP());
             return true;
+            */
+            return false;
         };
 
         bool registerWanderer(int OG, String mac_addr) {

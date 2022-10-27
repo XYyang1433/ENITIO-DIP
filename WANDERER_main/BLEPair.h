@@ -1,3 +1,4 @@
+#include <string>
 #include <stdio.h>
 #include <NimBLEDevice.h>
 #include <NimBLEAdvertisedDevice.h>
@@ -38,6 +39,9 @@ std::string CHARACTERISTIC_UUID_TX ;
 class PlayerUART {
 	public:
   int ID,OG; 
+  std::string IDstring;
+  size_t n_zero = 3;
+  
         class MyServerCallbacks : public BLEServerCallbacks {
             void onConnect(BLEServer* pServer) {
                 deviceConnected = true;
@@ -115,12 +119,17 @@ class PlayerUART {
             }
         };
         
+        
         void initialise() {
             ID = EEPROM.read(ID_add);
             OG = EEPROM.read(OG_add);
-            std::string displayString= "Device with ID:" + std::to_string(ID);
-            Serial.println(ID);
-            std::string UUIDHeader = "6E4"+std::to_string(OG)+std::to_string(ID);
+                        
+            IDstring = std::string(n_zero - std::min(n_zero, std::to_string(ID).length()), '0') + std::to_string(ID);
+            Serial.println(IDstring.c_str());
+            
+            std::string displayString= "Device with ID:" + IDstring;
+            std::string UUIDHeader = "6E4"+std::to_string(OG)+ IDstring;
+            
             SERVICE_UUID = UUIDHeader +"1-B5A3-F393-E0A9-E50E24DCCA9E"; 
             CHARACTERISTIC_UUID_RX = UUIDHeader +"2-B5A3-F393-E0A9-E50E24DCCA9E";
             CHARACTERISTIC_UUID_TX = UUIDHeader +"3-B5A3-F393-E0A9-E50E24DCCA9E";
@@ -163,19 +172,22 @@ class PlayerUART {
             //read EEPROM every time
             //OG:ID, numL1Treasure, numL2Treasure, Kill1OG:Kill1ID, Kill2OG:Kill2ID..
             int tempKillID,tempKillOG,tempLocAdd,number_of_level1_treasure,number_of_level2_treasure;
-            std::string DataToSent;
+            std::string DataToSent,tempKillStringID;
             
             number_of_level1_treasure=EEPROM.read(PLAYER_numL1Treasure_add);
             number_of_level2_treasure=EEPROM.read(PLAYER_numL2Treasure_add);
             
-            DataToSent = std::to_string(OG) +":"+ std::to_string(ID) +","+ std::to_string(number_of_level1_treasure) +","+ std::to_string(number_of_level2_treasure);
+            
+            
+            DataToSent = std::to_string(OG) +"-"+ IDstring +","+ std::to_string(number_of_level1_treasure) +","+ std::to_string(number_of_level2_treasure);
                         
-            tempLocAdd=EEPROM.read(KILL_location_add);
-            if(tempLocAdd!=0)
-              for(int i=20;i<20+killedCount*2;i=i+2){
+            int kill=EEPROM.read(KILL_location_add);
+            if(kill-20>=0)
+              for(int i=20;i<kill;i=i+2){
                 tempKillID=EEPROM.read(i);
                 tempKillOG=EEPROM.read(i+1);
-                DataToSent += ","+ std::to_string(tempKillOG)+":" + std::to_string(tempKillID);
+                tempKillStringID = std::string(n_zero - std::min(n_zero, std::to_string(tempKillID).length()), '0') + std::to_string(tempKillID);
+                DataToSent += ","+ std::to_string(tempKillOG)+"-" + tempKillStringID;
               }    
             Serial.println(DataToSent.c_str());
             pTxCharacteristic->setValue(DataToSent);
@@ -216,9 +228,8 @@ class PlayerUART {
             
         }
         
-      int LastUpdateTime=millis();
-        void PlayerUARTloop() {  
-            const int time_to_upload = 30000;//[ms]
+
+        void PlayerUARTloop() {             
             // disconnecting
             if (!deviceConnected && oldDeviceConnected) {
                 isPaired=0;
@@ -232,16 +243,20 @@ class PlayerUART {
                 isPaired= 1;
                 Serial.println("Device connected");
                 oldDeviceConnected = deviceConnected;
-            }
-           if(isPaired){
+            }          
+                             
+        }
+        int LastUpdateTime=millis();
+        void PlayerKilledDataUpdateLoop(){
+          const int time_to_upload = 30000;//[ms]
+          if(isPaired){
             if(millis()-LastUpdateTime>=time_to_upload){
               SentValueToPhone();
               LastUpdateTime=millis();
               Serial.println("Data sent");  
             }     
-          }
-                   
         }
+      }
 
 };
 

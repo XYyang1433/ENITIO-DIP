@@ -2,10 +2,10 @@
 #define ENITIO_enums_h
 
 typedef enum {
-    ALATAR = 0,
-    DRACHEN = 1,
-    EVA = 2,
-    INVICTA = 3,
+    ALATAR = 1,
+    DRACHEN = 2,
+    EVA = 3,
+    INVICTA = 4,
 } OG_id ;
 
 typedef enum {
