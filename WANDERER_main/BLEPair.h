@@ -124,32 +124,37 @@ class PlayerUART {
             SERVICE_UUID = UUIDHeader +"1-B5A3-F393-E0A9-E50E24DCCA9E"; 
             CHARACTERISTIC_UUID_RX = UUIDHeader +"2-B5A3-F393-E0A9-E50E24DCCA9E";
             CHARACTERISTIC_UUID_TX = UUIDHeader +"3-B5A3-F393-E0A9-E50E24DCCA9E";
-                
+            
+            Serial.println(SERVICE_UUID.c_str());
+            Serial.println(CHARACTERISTIC_UUID_RX.c_str());
+            Serial.println(CHARACTERISTIC_UUID_TX.c_str());            
+                            
             NimBLEDevice::init(displayString);
             pServer = NimBLEDevice::createServer();
             pServer->setCallbacks(new MyServerCallbacks());
             pScan = NimBLEDevice::getScan();
             pScan->setActiveScan(true);
-            pAdvertising = NimBLEDevice::getAdvertising();
-            pAdvertising->setScanResponse(true);
+            
             pService = pServer->createService(SERVICE_UUID);
 
             pTxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_TX,
-                NIMBLE_PROPERTY::READ|
-                NIMBLE_PROPERTY::WRITE
+                NIMBLE_PROPERTY::READ
             );//transmit,inverse for client
 
             pRxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_RX,             
-                NIMBLE_PROPERTY::WRITE|
-                NIMBLE_PROPERTY::READ
+                NIMBLE_PROPERTY::WRITE
             );//receive,inverse for client
 
             pRxCharacteristic->setCallbacks(new MyCallbacks());//if receive, get data
+
+            pAdvertising = NimBLEDevice::getAdvertising();
+            pAdvertising->setScanResponse(true);
   
             pService->start();//servce start
-            pServer->getAdvertising()->start();// Start advertising
+            delay(500);
+            pAdvertising->start();// Start advertising
             Serial.println("Waiting a client connection to notify...");
         }
 
@@ -172,7 +177,7 @@ class PlayerUART {
                 tempKillOG=EEPROM.read(i+1);
                 DataToSent += ","+ std::to_string(tempKillOG)+":" + std::to_string(tempKillID);
               }    
-        
+            Serial.println(DataToSent.c_str());
             pTxCharacteristic->setValue(DataToSent);
             
         }
