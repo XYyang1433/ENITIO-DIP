@@ -19,6 +19,7 @@ std::string fullMessage = "";
 bool messageStart = false;
 bool messageEnd = false;
 int scanTime = 2;
+int ReceivedConstant[99];
 
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
@@ -36,8 +37,7 @@ std::string CHARACTERISTIC_UUID_TX ;
 
 class PlayerUART {
 	public:
-  int ID,OG;
-  /*
+  int ID,OG; 
         class MyServerCallbacks : public BLEServerCallbacks {
             void onConnect(BLEServer* pServer) {
                 deviceConnected = true;
@@ -59,7 +59,7 @@ class PlayerUART {
             void onAuthenticationComplete(ble_gap_conn_desc desc) {
                 Serial.println("Starting BLE work!");
             }
-        };*/
+        };
         class MyCallbacks : public BLECharacteristicCallbacks {
             void onWrite(BLECharacteristic* pCharacteristic) {
                 std::string rxValue = pCharacteristic->getValue();
@@ -127,6 +127,7 @@ class PlayerUART {
                 
             NimBLEDevice::init(displayString);
             pServer = NimBLEDevice::createServer();
+            pServer->setCallbacks(new MyServerCallbacks());
             pScan = NimBLEDevice::getScan();
             pScan->setActiveScan(true);
             pAdvertising = NimBLEDevice::getAdvertising();
@@ -135,13 +136,15 @@ class PlayerUART {
 
             pTxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_TX,
+                NIMBLE_PROPERTY::READ|
                 NIMBLE_PROPERTY::WRITE
-            );//transmit
+            );//transmit,inverse for client
 
             pRxCharacteristic = pService->createCharacteristic(
                 CHARACTERISTIC_UUID_RX,             
+                NIMBLE_PROPERTY::WRITE|
                 NIMBLE_PROPERTY::READ
-            );//receive
+            );//receive,inverse for client
 
             pRxCharacteristic->setCallbacks(new MyCallbacks());//if receive, get data
   
@@ -189,10 +192,28 @@ class PlayerUART {
                 }
             }
           };
+
+        void CSVdecoder(){
+          //clear array
+          int receivedMessageCount=0;
+          std::size_t comma_location ;
+          for (int i=0;i<99;i++){
+            ReceivedConstant[i]=0;
+          }
+          std::string tempMessage=fullMessage;
+          do{   
+            comma_location = tempMessage.find(",");
+            ReceivedConstant[receivedMessageCount] = stoi(tempMessage.substr(0,comma_location));
+            receivedMessageCount++;
+            tempMessage=tempMessage.substr(comma_location+1,tempMessage.length()-1);                            
+          }while(comma_location != std::string::npos);    
+          ReceivedConstant[receivedMessageCount] = stoi(tempMessage);//last one without comma
+            
+        }
         
       int LastUpdateTime=millis();
         void PlayerUARTloop() {  
-            const int time_to_upload = 60000;//[ms]
+            const int time_to_upload = 30000;//[ms]
             // disconnecting
             if (!deviceConnected && oldDeviceConnected) {
                 isPaired=0;
