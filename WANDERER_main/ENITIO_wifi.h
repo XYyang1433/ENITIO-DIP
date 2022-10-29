@@ -1,9 +1,12 @@
+#include "EEPROM.h"
+#include <string>
 #include <HTTPClient.h>
 #include "esp_wpa2.h" //wpa2 library for connections to Enterprise networks
 #include <Arduino_JSON.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
+
 
 // WiFi Based on https://github.com/martinius96/ESP32-eduroam/blob/master/2022/test_2.0.3/test_2.0.3.ino
 
@@ -72,7 +75,7 @@ class DBConnection {
             http.end();
             return payload;
         };
-    
+        
         String retrieveParameterFromJSONArray(String parameter, String json_array) {
             JSONVar json_obj = JSON.parse(json_array);
             if (JSON.typeof(json_obj) == "undefined") {
@@ -83,6 +86,13 @@ class DBConnection {
         };
 
         MAC_ADDRESS retrieveMACAddressFromJSONArray(String json_array) {
+            String OGHexString, IDHexString;
+            int OG,ID;
+            OG=EEPROM.read(OG_add);
+            ID=EEPROM.read(ID_add);
+            OGHexString=String(OG,HEX);
+            IDHexString=String(ID,HEX);
+                                 
             JSONVar json_obj = JSON.parse(json_array);
             MAC_ADDRESS mac_addr;
             if (JSON.typeof(json_obj) == "undefined") {
@@ -93,8 +103,8 @@ class DBConnection {
             String n1 = "04";//JSON.stringify(json_obj["mac_address_part5"]);
             String n2 = "08";//JSON.stringify(json_obj["mac_address_part4"]);
             String n3 = "01";//JSON.stringify(json_obj["mac_address_part3"]);
-            String n4 = "02";//JSON.stringify(json_obj["mac_address_part2"]);
-            String n5 = "02";//JSON.stringify(json_obj["mac_address_part1"]);
+            String n4 = OGHexString;//JSON.stringify(json_obj["mac_address_part2"]);
+            String n5 = IDHexString;//JSON.stringify(json_obj["mac_address_part1"]);
             String n6 = "01";//JSON.stringify(json_obj["mac_address_part0"]);
 
             n1 = n1.substring(1, n1.length() - 1);
@@ -142,7 +152,7 @@ class DBConnection {
 
             return game_const;
         };
-
+        
         FailedFeedbackStatistics retrieveStatisticsFromJSONArray(String json_array) {
             JSONVar json_obj = JSON.parse(json_array);
             FailedFeedbackStatistics feedback_stats;
