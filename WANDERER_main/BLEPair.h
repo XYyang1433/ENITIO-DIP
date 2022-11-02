@@ -127,7 +127,7 @@ class PlayerUART {
             IDstring = std::string(n_zero - std::min(n_zero, std::to_string(ID).length()), '0') + std::to_string(ID);
             Serial.println(IDstring.c_str());
             
-            std::string displayString= "Device with ID:" + IDstring;
+            std::string displayString= "Device with OG-ID:" + std::to_string(OG)+"-"+IDstring;
             std::string UUIDHeader = "6E4"+std::to_string(OG)+ IDstring;
             
             SERVICE_UUID = UUIDHeader +"1-B5A3-F393-E0A9-E50E24DCCA9E"; 
@@ -162,7 +162,7 @@ class PlayerUART {
             pAdvertising->setScanResponse(true);
   
             pService->start();//servce start
-            delay(500);
+            delay(1000);
             pAdvertising->start();// Start advertising
             Serial.println("Waiting a client connection to notify...");
         }
@@ -248,7 +248,7 @@ class PlayerUART {
         }
         int LastUpdateTime=millis();
         void PlayerKilledDataUpdateLoop(){
-          const int time_to_upload = 30000;//[ms]
+          const int time_to_upload = 5*1000;//[ms]
           if(isPaired){
             if(millis()-LastUpdateTime>=time_to_upload){
               SentValueToPhone();

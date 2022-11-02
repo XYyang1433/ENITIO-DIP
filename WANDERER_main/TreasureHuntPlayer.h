@@ -546,7 +546,7 @@ class TreasureHuntPlayer
             EEPROM.write(KILL_add++,ID_);
             EEPROM.write(KILL_add++,OG_);
             EEPROM.write(KILL_location_add,KILL_add);
-            HP++; //IMMORTAL
+            //HP++; //IMMORTAL
           }
          
           tempNoti = "       Attacked      ";
