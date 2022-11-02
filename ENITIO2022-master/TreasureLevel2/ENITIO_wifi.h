@@ -8,8 +8,8 @@
 
 /**  WiFi Credentials **/
 #define EAP_ANONYMOUS_IDENTITY  ""
-#define EAP_IDENTITY  "NG0166NG@student.main.ntu.edu.sg"
-#define EAP_PASSWORD  "Y@ng#1433"
+#define EAP_IDENTITY  "@student.main.ntu.edu.sg"
+#define EAP_PASSWORD  ""
 #define HOME_WIFI_SSID "FreeWaffles"
 #define HOME_WIFI_PASSWORD "SponsoredByCKL00"
 const char *ssid = "NTUSECURE";
@@ -29,7 +29,7 @@ struct GAME_CONSTANTS {
 
 class DBConnection {
     private:
-        String DATABASE_URL = "http://nadira.pythonanywhere.com/";
+        String DATABASE_URL = "http://enitiotreasurehunt.link/";
         String GET_Request(const char* server) {
             HTTPClient http;
             http.setTimeout(HTTP_TIMEOUT);
@@ -79,7 +79,7 @@ class DBConnection {
             }
         };
 
-        GAME_CONSTANTS retrieveGameConstantsFromJSONArray(String json_array) {
+     /*   GAME_CONSTANTS retrieveGameConstantsFromJSONArray(String json_array) {
             JSONVar json_obj = JSON.parse(json_array);
             GAME_CONSTANTS game_const;
             if (JSON.typeof(json_obj) == "undefined") {
@@ -95,12 +95,12 @@ class DBConnection {
             game_const.TREASURE_LEVEL2_VIRUS_INFECTION_TIME = JSON.stringify(json_obj["TREASURE_LEVEL2_VIRUS_INFECTION_TIME"]).toInt();
             return game_const;
         };
-    
+    */
     public:
         bool connectToWiFi() {
             // returns True if connected, False if timeout
             // WiFi.begin(HOME_WIFI_SSID, HOME_WIFI_PASSWORD);
-            WiFi.begin(ssid, WPA2_AUTH_PEAP, EAP_ANONYMOUS_IDENTITY, EAP_IDENTITY, EAP_PASSWORD);
+           /* WiFi.begin(ssid, WPA2_AUTH_PEAP, EAP_ANONYMOUS_IDENTITY, EAP_IDENTITY, EAP_PASSWORD);
             Serial.print("Connecting to Wi-Fi");
             int counter = 0;
             while (WiFi.status() != WL_CONNECTED) {
@@ -112,14 +112,16 @@ class DBConnection {
                     return false;
                 }
             };
-            Serial.print("Connected with IP: "); Serial.println(WiFi.localIP());
+            Serial.print("Connected with IP: "); Serial.println(WiFi.localIP());*/
             return true;
         };
 
         int hasGameStarted() {
-            String url = DATABASE_URL + "game_status";
+            /*String url = DATABASE_URL + "game_status";
             String jsonArray = GET_Request(url.c_str());
             return retrieveParameterFromJSONArray("has_game_started", jsonArray).toInt();
+            */
+            return true;
         }
         
         String getDeviceMACAddress(int playerIdentifier) {
@@ -134,12 +136,12 @@ class DBConnection {
             return retrieveParameterFromJSONArray("mac_address", jsonArray);
         };
         
-        GAME_CONSTANTS getGameConstants() {
+        /*GAME_CONSTANTS getGameConstants() {
             String url = DATABASE_URL + "get_all_game_variables";
             String jsonArray = GET_Request(url.c_str());
             // Serial.println(jsonArray);
             return retrieveGameConstantsFromJSONArray(jsonArray);
-        };
+        };*/
 };
 
 DBConnection dbc;

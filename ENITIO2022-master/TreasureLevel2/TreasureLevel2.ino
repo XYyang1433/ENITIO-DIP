@@ -457,15 +457,27 @@ void setup() {
     isWiFiConnected = dbc.connectToWiFi();
   }
 
-  GAME_CONSTANTS game_consts = dbc.getGameConstants();
+  /*GAME_CONSTANTS game_consts = dbc.getGameConstants();
   HTTP_TIMEOUT = game_consts.HTTP_TIMEOUT;
   TREASURE_LEVEL2_INITIAL_HP = game_consts.TREASURE_LEVEL2_INITIAL_HP;
   NUM_L2TREASURES = game_consts.NUM_L2TREASURES;
   TREASURE_LEVEL2_ACTION_RECV_WAIT = game_consts.TREASURE_LEVEL2_ACTION_RECV_WAIT;
   TREASURE_LEVEL2_RECOVER_PERIOD = game_consts.TREASURE_LEVEL2_RECOVER_PERIOD;
   TREASURE_LEVEL2_VIRUS_INFECTION_TIME = game_consts.TREASURE_LEVEL2_VIRUS_INFECTION_TIME;
-  TREASURE_VIRUS_THRESHOLD = game_consts.TREASURE_VIRUS_THRESHOLD;
-  
+  TREASURE_VIRUS_THRESHOLD = game_consts.TREASURE_VIRUS_THRESHOLD;*/
+
+//DIP EDIT
+
+  HTTP_TIMEOUT = 30*1000;
+  TREASURE_LEVEL2_INITIAL_HP = 50;
+  NUM_L2TREASURES = 20;
+  TREASURE_LEVEL2_ACTION_RECV_WAIT = 150;
+  TREASURE_LEVEL2_RECOVER_PERIOD = 20*1000;
+  TREASURE_LEVEL2_VIRUS_INFECTION_TIME = 10*1000;
+  TREASURE_VIRUS_THRESHOLD = 15;
+
+
+
   xTaskCreatePinnedToCore(
                       backgroundTaskCode,   /* Task function. */
                       "backgroundTask",     /* name of task. */
