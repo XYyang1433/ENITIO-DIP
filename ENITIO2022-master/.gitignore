@@ -1,0 +1,5 @@
+.idea/
+web_server/venv/
+web_server/instance/
+*.pyc
+__pycache__/
