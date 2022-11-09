@@ -3,6 +3,8 @@
 #include <NimBLEDevice.h>
 #include <NimBLEAdvertisedDevice.h>
 
+#define UPLOAD_TIME   5*1000//[ms]
+
 bool isPaired=0;
 bool isIDinput=0;
 
@@ -248,7 +250,7 @@ class PlayerUART {
         }
         int LastUpdateTime=millis();
         void PlayerKilledDataUpdateLoop(){
-          const int time_to_upload = 5*1000;//[ms]
+          const int time_to_upload = UPLOAD_TIME;//[ms]
           if(isPaired){
             if(millis()-LastUpdateTime>=time_to_upload){
               SentValueToPhone();

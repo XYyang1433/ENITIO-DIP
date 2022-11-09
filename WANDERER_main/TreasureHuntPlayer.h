@@ -103,7 +103,7 @@ class TreasureHuntPlayer
   
       gameStarted = 0 ;
       game_started_buffer = 0;
-    }
+    };
 
     
     void setup_initial_state(int id, int og, bool isGL) {

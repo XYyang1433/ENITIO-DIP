@@ -140,7 +140,7 @@ class DBConnection {
             game_const.VIRUS_INFECTION_PROBABILITY = 50;//JSON.stringify(json_obj["VIRUS_INFECTION_PROBABILITY"]).toInt();
             game_const.PARTICIPANT_MaxHP = 12;//JSON.stringify(json_obj["PARTICIPANT_MaxHP"]).toInt();
             game_const.GL_MaxHP = 50;//JSON.stringify(json_obj["GL_MaxHP"]).toInt();
-            game_const.PARTICIPANT_MaxEn = 5; //JSON.stringify(json_obj["PARTICIPANT_MaxEn"]).toInt();
+            game_const.PARTICIPANT_MaxEn = 10; //JSON.stringify(json_obj["PARTICIPANT_MaxEn"]).toInt();
             game_const.GL_MaxEn = 50;//JSON.stringify(json_obj["GL_MaxEn"]).toInt();
             game_const.INITIAL_MANA = 1;//JSON.stringify(json_obj["INITIAL_MANA"]).toInt();
             game_const.HEAL_MANA = 10;//JSON.stringify(json_obj["HEAL_MANA"]).toInt();
